@@ -28,12 +28,7 @@ public class AsmMethodReferenceRewriter extends MethodReferenceRewriter {
 
         @Override
         public String getDefiningClass() {
-            String definingClass = super.getDefiningClass();
-            if ("Landroidx/appcompat/app/AppCompatActivity;".equals(definingClass)) {
-                System.out.println(className + "-------------Lcom/qihoo360/replugin/loader/a/PluginAppCompatXActivity;");
-                return "Lcom/qihoo360/replugin/loader/a/PluginAppCompatXActivity;";
-            }
-            return definingClass;
+            return LoaderInjector.activity(super.getDefiningClass());
         }
 
     }

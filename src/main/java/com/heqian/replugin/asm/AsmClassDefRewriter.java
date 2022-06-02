@@ -21,20 +21,17 @@ public class AsmClassDefRewriter extends ClassDefRewriter {
 
         @Override
         public String getSuperclass() {
-            var superclass = super.getSuperclass();
-            var type = getType();
-            if (type.startsWith("Landroid")) {
-                return superclass;
-            } else if (type.startsWith("Lcom/qihoo360/replugin/")) {
-                return superclass;
+            String type = super.getType();
+            if (type.startsWith("Landroid")
+                    || type.startsWith("Ljava")
+                    || type.startsWith("Lkotlin/")
+                    || type.startsWith("L$")
+                    || type.startsWith("Lcom/qihoo360/replugin/")
+                    || type.startsWith("Lcom/android/")
+            ) {
+                return super.getSuperclass();
             }
-
-            if ("Landroidx/appcompat/app/AppCompatActivity;".equals(superclass)) {
-                System.out.println(type);
-                return "Lcom/qihoo360/replugin/loader/a/PluginAppCompatXActivity;";
-            }
-
-            return superclass;
+            return LoaderInjector.activity(super.getSuperclass());
         }
     }
 }
