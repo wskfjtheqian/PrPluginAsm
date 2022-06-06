@@ -58,7 +58,7 @@ public class AsmInstructionRewriter extends InstructionRewriter {
                 if (!AsmProviderClientMethodReferenceRewriter.excludeProvider(type) && !definingClass.equals(AsmProviderClientMethodReferenceRewriter.replaceProvider(definingClass))) {
                     rewrite = new AsmProviderClientMethodReferenceRewriter(rewriters);
                 }
-                if (!AsmResourcesMethodReferenceRewriter.excludeResources(type) && !definingClass.equals(AsmResourcesMethodReferenceRewriter.replaceResources(definingClass))) {
+                if (!AsmResourcesMethodReferenceRewriter.excludeResources(type) && AsmResourcesMethodReferenceRewriter.excludeResources(definingClass)) {
                     rewrite = new AsmResourcesMethodReferenceRewriter(rewriters);
                 }
             }
@@ -116,7 +116,7 @@ public class AsmInstructionRewriter extends InstructionRewriter {
                 if (!AsmProviderClientMethodReferenceRewriter.excludeProvider(type) && !definingClass.equals(AsmProviderClientMethodReferenceRewriter.replaceProvider(definingClass))) {
                     rewrite = new AsmProviderClientMethodReferenceRewriter(rewriters);
                 }
-                if (!AsmResourcesMethodReferenceRewriter.excludeResources(type) && !definingClass.equals(AsmResourcesMethodReferenceRewriter.replaceResources(definingClass))) {
+                if (!AsmResourcesMethodReferenceRewriter.excludeResources(definingClass)) {
                     rewrite = new AsmResourcesMethodReferenceRewriter(rewriters);
                 }
             }

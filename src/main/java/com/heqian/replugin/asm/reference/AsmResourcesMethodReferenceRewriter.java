@@ -23,24 +23,14 @@ public class AsmResourcesMethodReferenceRewriter extends AsmMethodReferenceRewri
     }
 
     public static boolean excludeMethod(String method) {
-        return !(method.equals("getIdentifier")
+        return !(method.equalsIgnoreCase("getIdentifier")
         );
     }
 
     public static boolean excludeResources(String type) {
-        return type.equals("android.content.res.Resources")
-                || type.equals("Landroidx/localbroadcastmanager/content/LocalBroadcastManager");
+        return type.equalsIgnoreCase("Landroid/content/res/Resources;");
     }
 
-
-    public static String replaceResources(String name) {
-        switch (name) {
-            case "Landroidx/localbroadcastmanager/content/LocalBroadcastManager;":
-                return "Lcom/qihoo360/replugin/loader/b/PluginLocalBroadcastManager;";
-
-        }
-        return name;
-    }
 
     protected class AsmBroadcastRewrittenMethodReference extends AsmRewrittenMethodReference {
 
@@ -51,39 +41,12 @@ public class AsmResourcesMethodReferenceRewriter extends AsmMethodReferenceRewri
         @Override
         public String getDefiningClass() {
             if (!excludeMethod(getName())) {
-                return replaceResources(super.getDefiningClass());
+                return super.getDefiningClass();
             }
             return super.getDefiningClass();
         }
 
-        @Override
-        public List<? extends CharSequence> getParameterTypes() {
-            if (!excludeMethod(getName()) && !"getInstance".equals(getName())) {
-                List<CharSequence> param = new ArrayList<>();
-                param.add(0, "Ljava/lang/Object;");
-                for (CharSequence item : super.getParameterTypes()) {
-                    param.add(item);
-                }
-                return param;
-            }
-            return super.getParameterTypes();
-        }
 
-        @Override
-        public Opcode getOpcode() {
-            if (!excludeMethod(getName())) {
-                return Opcode.INVOKE_STATIC;
-            }
-            return super.getOpcode();
-        }
-
-        @Override
-        public String getReturnType() {
-            if (!excludeMethod(getName()) && "getInstance".equals(getName())) {
-                return "Ljava/lang/Object;";
-            }
-            return super.getReturnType();
-        }
     }
 
 }

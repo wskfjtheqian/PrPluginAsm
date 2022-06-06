@@ -73,7 +73,6 @@ public class AsmProviderClientMethodReferenceRewriter extends AsmMethodReference
         public Opcode getOpcode() {
             Opcode code = super.getOpcode();
             if (!excludeMethod(getName())) {
-                System.out.println(getName());
                 if (Opcode.INVOKE_VIRTUAL == code) {
                     return Opcode.INVOKE_STATIC;
                 } else if (Opcode.INVOKE_VIRTUAL_RANGE == code) {
