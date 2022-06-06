@@ -1,193 +1,152 @@
 package com.heqian.replugin.asm;
 
+import com.heqian.replugin.asm.reference.*;
+import com.heqian.replugin.asm.reference.AsmMethodReferenceRewriter;
+import org.jf.dexlib2.Opcode;
 import org.jf.dexlib2.ReferenceType;
-import org.jf.dexlib2.dexbacked.instruction.DexBackedInstruction;
+import org.jf.dexlib2.dexbacked.DexBackedMethodImplementation;
+import org.jf.dexlib2.iface.MethodImplementation;
 import org.jf.dexlib2.iface.instruction.Instruction;
 import org.jf.dexlib2.iface.instruction.ReferenceInstruction;
-import org.jf.dexlib2.iface.instruction.formats.*;
-import org.jf.dexlib2.iface.reference.FieldReference;
+import org.jf.dexlib2.iface.instruction.formats.Instruction35c;
+import org.jf.dexlib2.iface.instruction.formats.Instruction3rc;
 import org.jf.dexlib2.iface.reference.MethodReference;
 import org.jf.dexlib2.iface.reference.Reference;
-import org.jf.dexlib2.iface.reference.TypeReference;
 import org.jf.dexlib2.rewriter.InstructionRewriter;
-import org.jf.dexlib2.rewriter.RewriterUtils;
 import org.jf.dexlib2.rewriter.Rewriters;
-
-import static com.heqian.replugin.asm.Main.rewriterModule;
 
 public class AsmInstructionRewriter extends InstructionRewriter {
     public AsmInstructionRewriter(Rewriters rewriters) {
         super(rewriters);
     }
 
-    @Override
-    public Instruction rewrite(Instruction instruction) {
+
+    public Instruction rewrite(Instruction instruction, MethodImplementation method) {
         if (instruction instanceof ReferenceInstruction) {
             switch (instruction.getOpcode().format) {
-                case Format20bc:
-                    return new AsmRewrittenInstruction20bc((Instruction20bc) instruction);
-                case Format21c:
-                    return new AsmRewrittenInstruction21c((Instruction21c) instruction);
-                case Format22c:
-                    return new AsmRewrittenInstruction22c((Instruction22c) instruction);
-                case Format31c:
-                    return new AsmRewrittenInstruction31c((Instruction31c) instruction);
-                case Format35c:
-                    return new AsmRewrittenInstruction35c((Instruction35c) instruction);
-                case Format3rc:
-                    return new AsmRewrittenInstruction3rc((Instruction3rc) instruction);
+                case Format35c:  //"invoke-static",
+                    return new AsmRewrittenInstruction35c((Instruction35c) instruction, method);
+                case Format3rc:  //"invoke-static/range"
+                    return new AsmRewrittenInstruction3rc((Instruction3rc) instruction, method);
             }
         }
-        return instruction;
-    }
-
-    protected class AsmRewrittenInstruction20bc extends RewrittenInstruction20bc
-            implements Instruction20bc {
-        public AsmRewrittenInstruction20bc(Instruction20bc instruction) {
-            super(instruction);
-        }
-
-        @Override
-        public int getVerificationError() {
-            return instruction.getVerificationError();
-        }
-
-        @Override
-        public Reference getReference() {
-            switch (instruction.getReferenceType()) {
-                case ReferenceType.METHOD:
-                    return rewriterModule.getAsmMethodReferenceRewriter(rewriters).rewrite((MethodReference) instruction.getReference());
-                default:
-                    return super.getReference();
-            }
-        }
-    }
-
-    protected class AsmRewrittenInstruction21c extends RewrittenInstruction21c {
-        public AsmRewrittenInstruction21c(Instruction21c instruction) {
-            super(instruction);
-        }
-
-        public int getRegisterA() {
-            return instruction.getRegisterA();
-        }
-
-        @Override
-        public Reference getReference() {
-            switch (instruction.getReferenceType()) {
-                case ReferenceType.METHOD:
-                    return rewriterModule.getAsmMethodReferenceRewriter(rewriters).rewrite((MethodReference) instruction.getReference());
-                default:
-                    return super.getReference();
-            }
-        }
-    }
-
-    protected class AsmRewrittenInstruction22c extends RewrittenInstruction22c {
-        public AsmRewrittenInstruction22c(Instruction22c instruction) {
-            super(instruction);
-        }
-
-        public int getRegisterA() {
-            return instruction.getRegisterA();
-        }
-
-        public int getRegisterB() {
-            return instruction.getRegisterB();
-        }
-
-        @Override
-        public Reference getReference() {
-            switch (instruction.getReferenceType()) {
-                case ReferenceType.METHOD:
-                    return rewriterModule.getAsmMethodReferenceRewriter(rewriters).rewrite((MethodReference) instruction.getReference());
-                default:
-                    return super.getReference();
-            }
-        }
-    }
-
-    protected class AsmRewrittenInstruction31c extends RewrittenInstruction31c {
-        public AsmRewrittenInstruction31c(Instruction31c instruction) {
-            super(instruction);
-        }
-
-        public int getRegisterA() {
-            return instruction.getRegisterA();
-        }
-
-        @Override
-        public Reference getReference() {
-            switch (instruction.getReferenceType()) {
-                case ReferenceType.METHOD:
-                    return rewriterModule.getAsmMethodReferenceRewriter(rewriters).rewrite((MethodReference) instruction.getReference());
-                default:
-                    return super.getReference();
-            }
-        }
+        return super.rewrite(instruction);
     }
 
     protected class AsmRewrittenInstruction35c extends RewrittenInstruction35c {
-        public AsmRewrittenInstruction35c(Instruction35c instruction) {
+        private final MethodImplementation method;
+
+        private AsmMethodReferenceRewriter rewrite;
+
+        public AsmRewrittenInstruction35c(Instruction35c instruction, MethodImplementation method) {
             super(instruction);
-        }
+            this.method = method;
+            if (ReferenceType.METHOD == instruction.getReferenceType()) {
+                MethodReference reference = (MethodReference) instruction.getReference();
+                String definingClass = reference.getDefiningClass();
+                String type = ((DexBackedMethodImplementation) method).method.classDef.getType();
 
-        public int getRegisterC() {
-            return instruction.getRegisterC();
-        }
-
-        public int getRegisterE() {
-            return instruction.getRegisterE();
-        }
-
-        public int getRegisterG() {
-            return instruction.getRegisterG();
-        }
-
-        public int getRegisterCount() {
-            return instruction.getRegisterCount();
-        }
-
-        public int getRegisterD() {
-            return instruction.getRegisterD();
-        }
-
-        public int getRegisterF() {
-            return instruction.getRegisterF();
+                if (!LoaderInjector.excludeActivity(type) && !definingClass.equals(LoaderInjector.replaceActivity(definingClass))) {
+                    rewrite = new AsmActivityMethodReferenceRewriter(rewriters);
+                }
+                if (!AsmBroadcastMethodReferenceRewriter.excludeBroadcast(type) && !definingClass.equals(AsmBroadcastMethodReferenceRewriter.replaceBroadcast(definingClass))) {
+                    rewrite = new AsmBroadcastMethodReferenceRewriter(rewriters);
+                }
+                if (!AsmContentResolverMethodReferenceRewriter.excludeProvider(type) && !definingClass.equals(AsmContentResolverMethodReferenceRewriter.replaceProvider(definingClass))) {
+                    rewrite = new AsmContentResolverMethodReferenceRewriter(rewriters);
+                }
+                if (!AsmProviderClientMethodReferenceRewriter.excludeProvider(type) && !definingClass.equals(AsmProviderClientMethodReferenceRewriter.replaceProvider(definingClass))) {
+                    rewrite = new AsmProviderClientMethodReferenceRewriter(rewriters);
+                }
+                if (!AsmResourcesMethodReferenceRewriter.excludeResources(type) && !definingClass.equals(AsmResourcesMethodReferenceRewriter.replaceResources(definingClass))) {
+                    rewrite = new AsmResourcesMethodReferenceRewriter(rewriters);
+                }
+            }
         }
 
         @Override
         public Reference getReference() {
-            switch (instruction.getReferenceType()) {
-                case ReferenceType.METHOD:
-                    return rewriterModule.getAsmMethodReferenceRewriter(rewriters).rewrite((MethodReference) instruction.getReference());
-                default:
-                    return super.getReference();
+            if (null != rewrite) {
+                return rewrite.rewrite((MethodReference) instruction.getReference(), instruction);
             }
+            return super.getReference();
+        }
+
+        @Override
+        public Opcode getOpcode() {
+            Reference reference = getReference();
+            if (null != rewrite) {
+                return ((Instruction) reference).getOpcode();
+            }
+            return super.getOpcode();
+        }
+
+        @Override
+        public int getCodeUnits() {
+            Reference reference = getReference();
+            if (null != rewrite) {
+                return ((Instruction) reference).getCodeUnits();
+            }
+            return super.getCodeUnits();
         }
     }
 
     protected class AsmRewrittenInstruction3rc extends RewrittenInstruction3rc {
-        public AsmRewrittenInstruction3rc(Instruction3rc instruction) {
+        private final MethodImplementation method;
+
+        private AsmMethodReferenceRewriter rewrite;
+
+        public AsmRewrittenInstruction3rc(Instruction3rc instruction, MethodImplementation method) {
             super(instruction);
-        }
+            this.method = method;
+            if (ReferenceType.METHOD == instruction.getReferenceType()) {
+                MethodReference reference = (MethodReference) instruction.getReference();
+                String definingClass = reference.getDefiningClass();
+                String type = ((DexBackedMethodImplementation) method).method.classDef.getType();
 
-        public int getStartRegister() {
-            return instruction.getStartRegister();
-        }
-
-        public int getRegisterCount() {
-            return instruction.getRegisterCount();
+                if (!LoaderInjector.excludeActivity(type) && !definingClass.equals(LoaderInjector.replaceActivity(definingClass))) {
+                    rewrite = new AsmActivityMethodReferenceRewriter(rewriters);
+                }
+                if (!AsmBroadcastMethodReferenceRewriter.excludeBroadcast(type) && !definingClass.equals(AsmBroadcastMethodReferenceRewriter.replaceBroadcast(definingClass))) {
+                    rewrite = new AsmBroadcastMethodReferenceRewriter(rewriters);
+                }
+                if (!AsmContentResolverMethodReferenceRewriter.excludeProvider(type) && !definingClass.equals(AsmContentResolverMethodReferenceRewriter.replaceProvider(definingClass))) {
+                    rewrite = new AsmContentResolverMethodReferenceRewriter(rewriters);
+                }
+                if (!AsmProviderClientMethodReferenceRewriter.excludeProvider(type) && !definingClass.equals(AsmProviderClientMethodReferenceRewriter.replaceProvider(definingClass))) {
+                    rewrite = new AsmProviderClientMethodReferenceRewriter(rewriters);
+                }
+                if (!AsmResourcesMethodReferenceRewriter.excludeResources(type) && !definingClass.equals(AsmResourcesMethodReferenceRewriter.replaceResources(definingClass))) {
+                    rewrite = new AsmResourcesMethodReferenceRewriter(rewriters);
+                }
+            }
         }
 
         @Override
         public Reference getReference() {
-            switch (instruction.getReferenceType()) {
-                case ReferenceType.METHOD:
-                    return rewriterModule.getAsmMethodReferenceRewriter(rewriters).rewrite((MethodReference) instruction.getReference());
-                default:
-                    return super.getReference();
+            if (null != rewrite) {
+                return rewrite.rewrite((MethodReference) instruction.getReference(), instruction);
             }
+            return super.getReference();
+        }
+
+        @Override
+        public Opcode getOpcode() {
+            Reference reference = getReference();
+            if (null != rewrite) {
+                return ((Instruction) reference).getOpcode();
+            }
+            return super.getOpcode();
+        }
+
+        @Override
+        public int getCodeUnits() {
+            Reference reference = getReference();
+            if (null != rewrite) {
+                return ((Instruction) reference).getCodeUnits();
+            }
+            return super.getCodeUnits();
         }
     }
+
 }

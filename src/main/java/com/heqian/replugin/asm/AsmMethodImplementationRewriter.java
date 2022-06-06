@@ -1,14 +1,11 @@
 package com.heqian.replugin.asm;
 
-import org.jf.dexlib2.dexbacked.DexBackedMethodImplementation;
 import org.jf.dexlib2.iface.MethodImplementation;
 import org.jf.dexlib2.iface.instruction.Instruction;
 import org.jf.dexlib2.rewriter.MethodImplementationRewriter;
-import org.jf.dexlib2.rewriter.Rewriter;
-import org.jf.dexlib2.rewriter.RewriterUtils;
 import org.jf.dexlib2.rewriter.Rewriters;
 
-import static com.heqian.replugin.asm.Main.rewriterModule;
+import java.util.Iterator;
 
 public class AsmMethodImplementationRewriter extends MethodImplementationRewriter {
     public AsmMethodImplementationRewriter(Rewriters rewriters) {
@@ -18,13 +15,7 @@ public class AsmMethodImplementationRewriter extends MethodImplementationRewrite
 
     @Override
     public MethodImplementation rewrite(MethodImplementation methodImplementation) {
-        if (methodImplementation instanceof DexBackedMethodImplementation) {
-            var type = ((DexBackedMethodImplementation) methodImplementation).method.classDef.getType();
-            if (!LoaderInjector.excludeActivity(type)) {
-                return new AsmRewrittenMethodImplementation(methodImplementation);
-            }
-        }
-        return super.rewrite(methodImplementation);
+        return new AsmRewrittenMethodImplementation(methodImplementation);
     }
 
     protected class AsmRewrittenMethodImplementation extends RewrittenMethodImplementation {
@@ -35,7 +26,39 @@ public class AsmMethodImplementationRewriter extends MethodImplementationRewrite
 
         @Override
         public Iterable<? extends Instruction> getInstructions() {
-            return RewriterUtils.rewriteIterable(rewriterModule.getAsmInstructionRewriter(rewriters), methodImplementation.getInstructions());
+            return rewriteIterable(new AsmInstructionRewriter(rewriters), methodImplementation.getInstructions());
+        }
+
+
+        public <T> Iterable<T> rewriteIterable(AsmInstructionRewriter rewriter,
+                                               final Iterable<? extends T> iterable) {
+            return new Iterable<T>() {
+                @Override
+                public Iterator<T> iterator() {
+                    final Iterator<? extends T> iterator = iterable.iterator();
+                    return new Iterator<T>() {
+                        @Override
+                        public boolean hasNext() {
+                            return iterator.hasNext();
+                        }
+
+                        @Override
+                        public T next() {
+                            return rewriteNullable(rewriter, iterator.next());
+                        }
+
+                        @Override
+                        public void remove() {
+                            iterator.remove();
+                        }
+                    };
+                }
+            };
+        }
+
+        public <T> T rewriteNullable(AsmInstructionRewriter rewriter, T value) {
+            return value == null ? null : (T) rewriter.rewrite((Instruction) value, methodImplementation);
         }
     }
+
 }

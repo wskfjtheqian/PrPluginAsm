@@ -15,25 +15,13 @@ import java.io.File;
 import java.io.IOException;
 
 public class Main {
-
-    public static AsmRewriterModule rewriterModule = new AsmRewriterModule();
-    public static String className = "";
-
     public static void main(String[] args) {
         try {
             MultiDexContainer<? extends DexBackedDexFile> multiDex = DexFileFactory.loadDexContainer(new File("C:\\Users\\Administrator\\Desktop\\a\\ysa\\classes.dex"), Opcodes.getDefault());
             for (String name : multiDex.getDexEntryNames()) {
-                DexFileRewriter rewriter = new DexFileRewriter(new DexRewriter(rewriterModule));
+                DexFileRewriter rewriter = new DexFileRewriter(new DexRewriter(new AsmRewriterModule()));
                 DexFile outDex = rewriter.rewrite(multiDex.getEntry(name).getDexFile());
-//                DexFileFactory.writeDexFile("C:\\Users\\Administrator\\Desktop\\a\\ysa\\classes2.dex", outDex);
-
-                DexPool dexPool = new DexPool(outDex.getOpcodes());
-                for (ClassDef classDef : outDex.getClasses()) {
-                    className = classDef.getType();
-                    dexPool.internClass(classDef);
-                }
-                className = "AAAAAAAAAAAAAAAAAA";
-                dexPool.writeTo(new FileDataStore(new File("C:\\Users\\Administrator\\Desktop\\a\\ysa\\classes3.dex")));
+                DexFileFactory.writeDexFile("C:\\Users\\Administrator\\Desktop\\a\\ysa\\classes2.dex", outDex);
             }
 
 

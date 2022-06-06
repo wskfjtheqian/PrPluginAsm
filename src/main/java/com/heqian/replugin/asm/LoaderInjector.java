@@ -39,21 +39,6 @@ public class LoaderInjector {
     }
 
 
-    public static boolean excludeBroadcast(String type) {
-        return type.startsWith("Landroid/support/v4/content/LocalBroadcastManager")
-                || type.startsWith("Landroidx/localbroadcastmanager/content/LocalBroadcastManager")
-                || type.startsWith("Lkotlin/")
-                || type.startsWith("L$");
-    }
-
-    public static String replaceBroadcast(String name) {
-        switch (name) {
-            case "Landroidx/localbroadcastmanager/content/LocalBroadcastManager;":
-                return "Lcom/qihoo360/replugin/loader/b/PluginLocalBroadcastManager;";
-
-        }
-        return name;
-    }
 
 
 }
