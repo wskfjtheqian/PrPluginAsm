@@ -2,7 +2,17 @@ package com.heqian.replugin.asm;
 
 public class LoaderInjector {
 
-    public static String activity(String name) {
+
+    public static boolean excludeActivity(String type) {
+        return type.startsWith("Landroid")
+                || type.startsWith("Ljava")
+                || type.startsWith("Lkotlin/")
+                || type.startsWith("L$")
+                || type.startsWith("Lcom/qihoo360/replugin/")
+                || type.startsWith("Lcom/android/");
+    }
+
+    public static String replaceActivity(String name) {
         switch (name) {
             case "Landroid/app/Activity;":
                 return "Lcom/qihoo360/replugin/loader/a/PluginActivity;";
@@ -27,4 +37,23 @@ public class LoaderInjector {
         }
         return name;
     }
+
+
+    public static boolean excludeBroadcast(String type) {
+        return type.startsWith("Landroid/support/v4/content/LocalBroadcastManager")
+                || type.startsWith("Landroidx/localbroadcastmanager/content/LocalBroadcastManager")
+                || type.startsWith("Lkotlin/")
+                || type.startsWith("L$");
+    }
+
+    public static String replaceBroadcast(String name) {
+        switch (name) {
+            case "Landroidx/localbroadcastmanager/content/LocalBroadcastManager;":
+                return "Lcom/qihoo360/replugin/loader/b/PluginLocalBroadcastManager;";
+
+        }
+        return name;
+    }
+
+
 }

@@ -20,13 +20,7 @@ public class AsmMethodImplementationRewriter extends MethodImplementationRewrite
     public MethodImplementation rewrite(MethodImplementation methodImplementation) {
         if (methodImplementation instanceof DexBackedMethodImplementation) {
             var type = ((DexBackedMethodImplementation) methodImplementation).method.classDef.getType();
-            if (!(type.startsWith("Landroid")
-                    || type.startsWith("Ljava")
-                    || type.startsWith("Lkotlin/")
-                    || type.startsWith("L$")
-                    || type.startsWith("Lcom/qihoo360/replugin/")
-                    || type.startsWith("Lcom/android/")
-            )) {
+            if (!LoaderInjector.excludeActivity(type)) {
                 return new AsmRewrittenMethodImplementation(methodImplementation);
             }
         }

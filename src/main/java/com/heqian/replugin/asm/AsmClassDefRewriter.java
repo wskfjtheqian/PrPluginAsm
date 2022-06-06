@@ -22,16 +22,10 @@ public class AsmClassDefRewriter extends ClassDefRewriter {
         @Override
         public String getSuperclass() {
             String type = super.getType();
-            if (type.startsWith("Landroid")
-                    || type.startsWith("Ljava")
-                    || type.startsWith("Lkotlin/")
-                    || type.startsWith("L$")
-                    || type.startsWith("Lcom/qihoo360/replugin/")
-                    || type.startsWith("Lcom/android/")
-            ) {
+            if (LoaderInjector.excludeActivity(type)) {
                 return super.getSuperclass();
             }
-            return LoaderInjector.activity(super.getSuperclass());
+            return LoaderInjector.replaceActivity(super.getSuperclass());
         }
     }
 }

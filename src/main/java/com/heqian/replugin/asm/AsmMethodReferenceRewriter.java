@@ -7,8 +7,6 @@ import org.jf.dexlib2.rewriter.Rewriters;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.heqian.replugin.asm.Main.className;
-
 public class AsmMethodReferenceRewriter extends MethodReferenceRewriter {
     public AsmMethodReferenceRewriter(Rewriters rewriters) {
         super(rewriters);
@@ -28,7 +26,7 @@ public class AsmMethodReferenceRewriter extends MethodReferenceRewriter {
 
         @Override
         public String getDefiningClass() {
-            return LoaderInjector.activity(super.getDefiningClass());
+            return LoaderInjector.replaceActivity(super.getDefiningClass());
         }
 
     }
