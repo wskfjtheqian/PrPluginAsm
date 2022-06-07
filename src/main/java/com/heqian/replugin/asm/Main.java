@@ -17,11 +17,11 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) {
         try {
-            MultiDexContainer<? extends DexBackedDexFile> multiDex = DexFileFactory.loadDexContainer(new File("C:\\Users\\Administrator\\Desktop\\a\\ysa\\classes.dex"), Opcodes.getDefault());
+            MultiDexContainer<? extends DexBackedDexFile> multiDex = DexFileFactory.loadDexContainer(new File("C:\\Users\\Administrator\\Desktop\\a\\as\\classes.dex"), Opcodes.getDefault());
             for (String name : multiDex.getDexEntryNames()) {
                 DexFileRewriter rewriter = new DexFileRewriter(new DexRewriter(new AsmRewriterModule()));
                 DexFile outDex = rewriter.rewrite(multiDex.getEntry(name).getDexFile());
-                DexFileFactory.writeDexFile("C:\\Users\\Administrator\\Desktop\\a\\ysa\\classes2.dex", outDex);
+                DexFileFactory.writeDexFile("C:\\Users\\Administrator\\Desktop\\a\\as\\app-debug\\classes.dex", outDex);
             }
 
 

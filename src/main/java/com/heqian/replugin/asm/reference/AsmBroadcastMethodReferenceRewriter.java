@@ -32,9 +32,9 @@ public class AsmBroadcastMethodReferenceRewriter extends AsmMethodReferenceRewri
     }
 
     public static boolean excludeBroadcast(String type) {
-        return type.equals("Landroid/support/v4/content/LocalBroadcastManager")
-                || type.equals("Landroidx/localbroadcastmanager/content/LocalBroadcastManager")
-                ||  type.equals("Lcom/qihoo360/replugin");
+        return type.equals("Landroid/support/v4/content/LocalBroadcastManager;")
+                || type.equals("Landroidx/localbroadcastmanager/content/LocalBroadcastManager;")
+                ||  type.startsWith("Lcom/qihoo360/replugin");
     }
 
 
@@ -65,7 +65,7 @@ public class AsmBroadcastMethodReferenceRewriter extends AsmMethodReferenceRewri
         public List<? extends CharSequence> getParameterTypes() {
             if (!excludeMethod(getName()) && !"getInstance".equals(getName())) {
                 List<CharSequence> param = new ArrayList<>();
-                param.add(0, "Ljava/lang/Object;");
+                param.add(0, "Landroidx/localbroadcastmanager/content/LocalBroadcastManager;");
                 for (CharSequence item : super.getParameterTypes()) {
                     param.add(item);
                 }
@@ -90,7 +90,7 @@ public class AsmBroadcastMethodReferenceRewriter extends AsmMethodReferenceRewri
         @Override
         public String getReturnType() {
             if (!excludeMethod(getName()) && "getInstance".equals(getName())) {
-                return "Ljava/lang/Object;";
+                return "Landroidx/localbroadcastmanager/content/LocalBroadcastManager;";
             }
             return super.getReturnType();
         }

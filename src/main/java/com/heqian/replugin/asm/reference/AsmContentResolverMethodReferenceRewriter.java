@@ -42,7 +42,7 @@ public class AsmContentResolverMethodReferenceRewriter extends AsmMethodReferenc
 
 
     public static boolean excludeProvider(String type) {
-        return type.equals("Landroid/content/ContentResolver")||  type.equals("Lcom/qihoo360/replugin");
+        return type.equals("Landroid/content/ContentResolver;")||  type.startsWith("Lcom/qihoo360/replugin");
     }
 
 
@@ -73,7 +73,7 @@ public class AsmContentResolverMethodReferenceRewriter extends AsmMethodReferenc
         public List<? extends CharSequence> getParameterTypes() {
             if (!excludeMethod(getName())) {
                 List<CharSequence> param = new ArrayList<>();
-                param.add(0, "Landroid/content/Context;");
+                param.add(0, "Landroid/content/ContentResolver;");
                 for (CharSequence item : super.getParameterTypes()) {
                     param.add(item);
                 }

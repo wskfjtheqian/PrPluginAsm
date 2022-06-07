@@ -27,7 +27,7 @@ public class AsmProviderClientMethodReferenceRewriter extends AsmMethodReference
 
 
     public static boolean excludeProvider(String type) {
-        return type.equals("Landroid/content/ContentProviderClient;") ||  type.equals("Lcom/qihoo360/replugin");
+        return type.equals("Landroid/content/ContentProviderClient;") ||  type.startsWith("Lcom/qihoo360/replugin");
     }
 
     public static String replaceProvider(String name) {

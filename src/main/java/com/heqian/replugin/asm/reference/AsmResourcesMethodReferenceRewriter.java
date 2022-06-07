@@ -28,7 +28,7 @@ public class AsmResourcesMethodReferenceRewriter extends AsmMethodReferenceRewri
     }
 
     public static boolean excludeResource(String type) {
-        return type.equals("Lcom/qihoo360/replugin");
+        return type.startsWith("Lcom/qihoo360/replugin");
     }
 
 
