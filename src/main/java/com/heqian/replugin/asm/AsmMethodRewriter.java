@@ -28,7 +28,7 @@ public class AsmMethodRewriter extends MethodRewriter {
 
 
     public static String replaceBroadcast(String name) {
-        switch (name.toString()) {
+        switch (name) {
             case "Landroidx/localbroadcastmanager/content/LocalBroadcastManager;":
                 return "Lcom/qihoo360/replugin/loader/b/PluginLocalBroadcastManager;";
 
