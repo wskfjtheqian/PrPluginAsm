@@ -6,16 +6,13 @@ import org.jf.dexlib2.iface.reference.MethodReference;
 import org.jf.dexlib2.rewriter.Rewriters;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class AsmProviderClientMethodReferenceRewriter extends AsmMethodReferenceRewriter {
     public AsmProviderClientMethodReferenceRewriter(Rewriters rewriters) {
         super(rewriters);
     }
 
-    protected Map<MethodReference, AsmRewrittenMethodReference> referenceMap = new HashMap<>();
 
     @Override
     public MethodReference rewrite(MethodReference value, ReferenceInstruction instruction) {
@@ -30,7 +27,7 @@ public class AsmProviderClientMethodReferenceRewriter extends AsmMethodReference
 
 
     public static boolean excludeProvider(String type) {
-        return type.equals("Landroid/content/ContentProviderClient;");
+        return type.equals("Landroid/content/ContentProviderClient;") ||  type.equals("Lcom/qihoo360/replugin");
     }
 
     public static String replaceProvider(String name) {

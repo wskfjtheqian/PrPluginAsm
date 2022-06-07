@@ -23,14 +23,22 @@ public class AsmResourcesMethodReferenceRewriter extends AsmMethodReferenceRewri
     }
 
     public static boolean excludeMethod(String method) {
-        return !(method.equalsIgnoreCase("getIdentifier")
+        return !(method.equals("getIdentifier")
         );
     }
 
-    public static boolean excludeResources(String type) {
-        return type.equalsIgnoreCase("Landroid/content/res/Resources;");
+    public static boolean excludeResource(String type) {
+        return type.equals("Lcom/qihoo360/replugin");
     }
 
+
+    public static String replaceResource(String name) {
+        switch (name) {
+            case "Landroid/content/res/Resources;":
+                return "Lcom/qihoo360/replugin/loader/r/PluginResources;";
+        }
+        return name;
+    }
 
     protected class AsmBroadcastRewrittenMethodReference extends AsmRewrittenMethodReference {
 
@@ -41,12 +49,36 @@ public class AsmResourcesMethodReferenceRewriter extends AsmMethodReferenceRewri
         @Override
         public String getDefiningClass() {
             if (!excludeMethod(getName())) {
-                return super.getDefiningClass();
+                return replaceResource(super.getDefiningClass());
             }
             return super.getDefiningClass();
         }
 
+        @Override
+        public List<? extends CharSequence> getParameterTypes() {
+            if (!excludeMethod(getName())) {
+                List<CharSequence> param = new ArrayList<>();
+                param.add(0, "Landroid/content/res/Resources;");
+                for (CharSequence item : super.getParameterTypes()) {
+                    param.add(item);
+                }
+                return param;
+            }
+            return super.getParameterTypes();
+        }
 
+        @Override
+        public Opcode getOpcode() {
+            Opcode code = super.getOpcode();
+            if (!excludeMethod(getName())) {
+                if (Opcode.INVOKE_VIRTUAL == code) {
+                    return Opcode.INVOKE_STATIC;
+                } else if (Opcode.INVOKE_VIRTUAL_RANGE == code) {
+                    return Opcode.INVOKE_STATIC_RANGE;
+                }
+            }
+            return code;
+        }
     }
 
 }

@@ -15,7 +15,7 @@ public class AsmContentResolverMethodReferenceRewriter extends AsmMethodReferenc
         super(rewriters);
     }
 
-    protected Map<MethodReference, AsmRewrittenMethodReference> referenceMap = new HashMap<>();
+
 
     @Override
     public MethodReference rewrite(MethodReference value, ReferenceInstruction instruction) {
@@ -42,7 +42,7 @@ public class AsmContentResolverMethodReferenceRewriter extends AsmMethodReferenc
 
 
     public static boolean excludeProvider(String type) {
-        return type.equals("Landroid/content/ContentResolver");
+        return type.equals("Landroid/content/ContentResolver")||  type.equals("Lcom/qihoo360/replugin");
     }
 
 

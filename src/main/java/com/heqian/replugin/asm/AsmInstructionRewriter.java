@@ -1,13 +1,16 @@
 package com.heqian.replugin.asm;
 
-import com.heqian.replugin.asm.reference.*;
 import com.heqian.replugin.asm.reference.AsmMethodReferenceRewriter;
+import com.heqian.replugin.asm.reference.*;
 import org.jf.dexlib2.Opcode;
 import org.jf.dexlib2.ReferenceType;
 import org.jf.dexlib2.dexbacked.DexBackedMethodImplementation;
+import org.jf.dexlib2.dexbacked.instruction.DexBackedInstruction;
+import org.jf.dexlib2.dexbacked.instruction.DexBackedInstruction11x;
 import org.jf.dexlib2.iface.MethodImplementation;
 import org.jf.dexlib2.iface.instruction.Instruction;
 import org.jf.dexlib2.iface.instruction.ReferenceInstruction;
+import org.jf.dexlib2.iface.instruction.formats.Instruction11x;
 import org.jf.dexlib2.iface.instruction.formats.Instruction35c;
 import org.jf.dexlib2.iface.instruction.formats.Instruction3rc;
 import org.jf.dexlib2.iface.reference.MethodReference;
@@ -46,7 +49,7 @@ public class AsmInstructionRewriter extends InstructionRewriter {
                 String definingClass = reference.getDefiningClass();
                 String type = ((DexBackedMethodImplementation) method).method.classDef.getType();
 
-                if (!LoaderInjector.excludeActivity(type) && !definingClass.equals(LoaderInjector.replaceActivity(definingClass))) {
+                if (!AsmActivityMethodReferenceRewriter.excludeActivity(type) && !definingClass.equals(AsmActivityMethodReferenceRewriter.replaceActivity(definingClass))) {
                     rewrite = new AsmActivityMethodReferenceRewriter(rewriters);
                 }
                 if (!AsmBroadcastMethodReferenceRewriter.excludeBroadcast(type) && !definingClass.equals(AsmBroadcastMethodReferenceRewriter.replaceBroadcast(definingClass))) {
@@ -58,7 +61,7 @@ public class AsmInstructionRewriter extends InstructionRewriter {
                 if (!AsmProviderClientMethodReferenceRewriter.excludeProvider(type) && !definingClass.equals(AsmProviderClientMethodReferenceRewriter.replaceProvider(definingClass))) {
                     rewrite = new AsmProviderClientMethodReferenceRewriter(rewriters);
                 }
-                if (!AsmResourcesMethodReferenceRewriter.excludeResources(type) && AsmResourcesMethodReferenceRewriter.excludeResources(definingClass)) {
+                if (!AsmResourcesMethodReferenceRewriter.excludeResource(type) && !definingClass.equals(AsmResourcesMethodReferenceRewriter.replaceResource(definingClass))) {
                     rewrite = new AsmResourcesMethodReferenceRewriter(rewriters);
                 }
             }
@@ -104,7 +107,7 @@ public class AsmInstructionRewriter extends InstructionRewriter {
                 String definingClass = reference.getDefiningClass();
                 String type = ((DexBackedMethodImplementation) method).method.classDef.getType();
 
-                if (!LoaderInjector.excludeActivity(type) && !definingClass.equals(LoaderInjector.replaceActivity(definingClass))) {
+                if (!AsmActivityMethodReferenceRewriter.excludeActivity(type) && !definingClass.equals(AsmActivityMethodReferenceRewriter.replaceActivity(definingClass))) {
                     rewrite = new AsmActivityMethodReferenceRewriter(rewriters);
                 }
                 if (!AsmBroadcastMethodReferenceRewriter.excludeBroadcast(type) && !definingClass.equals(AsmBroadcastMethodReferenceRewriter.replaceBroadcast(definingClass))) {
@@ -116,7 +119,7 @@ public class AsmInstructionRewriter extends InstructionRewriter {
                 if (!AsmProviderClientMethodReferenceRewriter.excludeProvider(type) && !definingClass.equals(AsmProviderClientMethodReferenceRewriter.replaceProvider(definingClass))) {
                     rewrite = new AsmProviderClientMethodReferenceRewriter(rewriters);
                 }
-                if (!AsmResourcesMethodReferenceRewriter.excludeResources(definingClass)) {
+                if (!AsmResourcesMethodReferenceRewriter.excludeResource(type) && !definingClass.equals(AsmResourcesMethodReferenceRewriter.replaceResource(definingClass))) {
                     rewrite = new AsmResourcesMethodReferenceRewriter(rewriters);
                 }
             }

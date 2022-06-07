@@ -1,6 +1,5 @@
 package com.heqian.replugin.asm.reference;
 
-import com.heqian.replugin.asm.LoaderInjector;
 import org.jf.dexlib2.Opcode;
 import org.jf.dexlib2.iface.instruction.ReferenceInstruction;
 import org.jf.dexlib2.iface.reference.MethodReference;
@@ -34,7 +33,8 @@ public class AsmBroadcastMethodReferenceRewriter extends AsmMethodReferenceRewri
 
     public static boolean excludeBroadcast(String type) {
         return type.equals("Landroid/support/v4/content/LocalBroadcastManager")
-                || type.equals("Landroidx/localbroadcastmanager/content/LocalBroadcastManager");
+                || type.equals("Landroidx/localbroadcastmanager/content/LocalBroadcastManager")
+                ||  type.equals("Lcom/qihoo360/replugin");
     }
 
 
