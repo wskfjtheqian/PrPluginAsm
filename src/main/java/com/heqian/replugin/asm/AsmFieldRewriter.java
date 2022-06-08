@@ -19,10 +19,12 @@ public class AsmFieldRewriter extends FieldRewriter {
 
     protected class AsmRewrittenField extends RewrittenField {
         private final String whereClass;
+        private final String fieldName;
 
         public AsmRewrittenField(Field field) {
             super(field);
             this.whereClass = ((DexBackedField) field).classDef.getType();
+            this.fieldName = field.getName();
         }
 
 
@@ -32,9 +34,9 @@ public class AsmFieldRewriter extends FieldRewriter {
             if (!AsmInstructionRewriter.excludeBroadcast(whereClass)) {
                 type = AsmInstructionRewriter.replaceBroadcast(type);
             }
-            if (!AsmInstructionRewriter.excludeActivity(whereClass)) {
-                type = AsmInstructionRewriter.replaceActivity(type);
-            }
+//            if (!AsmInstructionRewriter.excludeActivity(whereClass)) {
+//                type = AsmInstructionRewriter.replaceActivity(type);
+//            }
             return type;
         }
     }

@@ -2,18 +2,21 @@ package com.heqian.replugin.asm;
 
 import com.heqian.replugin.asm.reference.AsmFieldReferenceRewriter;
 import com.heqian.replugin.asm.reference.AsmMethodReferenceRewriter;
+import com.heqian.replugin.asm.reference.AsmTypeReferenceRewriter;
 import org.jf.dexlib2.Opcode;
 import org.jf.dexlib2.ReferenceType;
 import org.jf.dexlib2.dexbacked.DexBackedMethodImplementation;
 import org.jf.dexlib2.iface.MethodImplementation;
 import org.jf.dexlib2.iface.instruction.Instruction;
 import org.jf.dexlib2.iface.instruction.ReferenceInstruction;
+import org.jf.dexlib2.iface.instruction.formats.Instruction21c;
 import org.jf.dexlib2.iface.instruction.formats.Instruction22c;
 import org.jf.dexlib2.iface.instruction.formats.Instruction35c;
 import org.jf.dexlib2.iface.instruction.formats.Instruction3rc;
 import org.jf.dexlib2.iface.reference.FieldReference;
 import org.jf.dexlib2.iface.reference.MethodReference;
 import org.jf.dexlib2.iface.reference.Reference;
+import org.jf.dexlib2.iface.reference.TypeReference;
 import org.jf.dexlib2.rewriter.InstructionRewriter;
 import org.jf.dexlib2.rewriter.Rewriters;
 
@@ -26,11 +29,13 @@ import static org.jf.dexlib2.Format.Format3rc;
 public class AsmInstructionRewriter extends InstructionRewriter {
     private final AsmMethodReferenceRewriter methodReferenceRewriter;
     private final AsmFieldReferenceRewriter fieldReferenceRewriter;
+    private final AsmTypeReferenceRewriter typeReferenceRewriter;
 
     public AsmInstructionRewriter(Rewriters rewriters) {
         super(rewriters);
         methodReferenceRewriter = new AsmMethodReferenceRewriter(rewriters);
         fieldReferenceRewriter = new AsmFieldReferenceRewriter(rewriters);
+        typeReferenceRewriter = new AsmTypeReferenceRewriter(rewriters);
     }
 
     public static boolean excludeBroadcast(String type) {
@@ -151,8 +156,10 @@ public class AsmInstructionRewriter extends InstructionRewriter {
         if (instruction instanceof ReferenceInstruction) {
             String whereClass = ((DexBackedMethodImplementation) method).method.classDef.getType();
             String whereMethod = ((DexBackedMethodImplementation) method).method.getName();
+            if("getCurrentActivity".equals(whereMethod)){
+                System.out.println(whereClass);
+            }
             if (ReferenceType.METHOD == ((ReferenceInstruction) instruction).getReferenceType()) {
-
                 MethodReference reference = (MethodReference) ((ReferenceInstruction) instruction).getReference();
                 String definingClass = reference.getDefiningClass();
                 String methodName = reference.getName();
@@ -170,10 +177,10 @@ public class AsmInstructionRewriter extends InstructionRewriter {
                     if (!excludeBroadcast(whereClass)) {
                         definingClass = replaceBroadcast(definingClass);
                     }
-                } else if (!definingClass.equals(replaceActivity(definingClass))) {
-                    if (!excludeActivity(whereClass)) {
-                        definingClass = replaceActivity(definingClass);
-                    }
+//                } else if (!definingClass.equals(replaceActivity(definingClass))) {
+//                    if (!excludeActivity(whereClass)) {
+//                        definingClass = replaceActivity(definingClass);
+//                    }
                 } else if (!definingClass.equals(replaceProvider(definingClass)) && methodByProvider(methodName)) {
                     if (!excludeProvider(whereClass)) {
                         definingClass = replaceProvider(definingClass);
@@ -193,19 +200,18 @@ public class AsmInstructionRewriter extends InstructionRewriter {
                     if (!excludeBroadcast(whereClass)) {
                         param = replaceBroadcast(param);
                     }
-                    if (!excludeActivity(whereClass)) {
-                        param = replaceActivity(param);
-                    }
-
+//                    if (!excludeActivity(whereClass)) {
+//                        param = replaceActivity(param);
+//                    }
                     parameter.add(param);
                 }
 
                 if (!excludeBroadcast(whereClass)) {
                     returnType = replaceBroadcast(returnType);
                 }
-                if (!excludeActivity(whereClass)) {
-                    returnType = replaceActivity(returnType);
-                }
+//                if (!excludeActivity(whereClass)) {
+//                    returnType = replaceActivity(returnType);
+//                }
 
                 if (Format35c == instruction.getOpcode().format) {
                     return new AsmRewrittenInstruction35c(
@@ -233,9 +239,9 @@ public class AsmInstructionRewriter extends InstructionRewriter {
                 if (!excludeBroadcast(whereClass)) {
                     fieldType = replaceBroadcast(fieldType);
                 }
-                if (!excludeActivity(whereClass)) {
-                    fieldType = replaceActivity(fieldType);
-                }
+//                if (!excludeActivity(whereClass)) {
+//                    fieldType = replaceActivity(fieldType);
+//                }
 
                 if (Opcode.IGET_OBJECT == instruction.getOpcode() || Opcode.IPUT_OBJECT == instruction.getOpcode()) {
                     return new AsmRewrittenInstruction22c(
@@ -243,8 +249,24 @@ public class AsmInstructionRewriter extends InstructionRewriter {
                             fieldReferenceRewriter.rewrite(reference, definingClass, fieldName, fieldType)
                     );
                 }
-            }
+            } else if (ReferenceType.TYPE == ((ReferenceInstruction) instruction).getReferenceType()) {
+                TypeReference reference = (TypeReference) ((ReferenceInstruction) instruction).getReference();
+                String type = reference.getType();
 
+                if (!excludeBroadcast(whereClass)) {
+                    type = replaceBroadcast(type);
+                }
+//                if (!excludeActivity(whereClass)) {
+//                    type = replaceActivity(type);
+//                }
+
+                if (Opcode.CHECK_CAST == instruction.getOpcode()) {
+                    return new AsmRewrittenInstruction21c(
+                            (Instruction21c) instruction,
+                            typeReferenceRewriter.rewrite(reference, type)
+                    );
+                }
+            }
         }
         return super.rewrite(instruction);
     }
@@ -319,4 +341,20 @@ public class AsmInstructionRewriter extends InstructionRewriter {
             return reference;
         }
     }
+
+    private class AsmRewrittenInstruction21c extends RewrittenInstruction21c {
+        private final Reference reference;
+
+        public AsmRewrittenInstruction21c(Instruction21c instruction, Reference reference) {
+            super(instruction);
+            this.reference = reference;
+        }
+
+        @Override
+        public Reference getReference() {
+            return reference;
+        }
+    }
+
+
 }

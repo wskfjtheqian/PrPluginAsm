@@ -1,7 +1,6 @@
 package com.heqian.replugin.asm;
 
 import org.jf.dexlib2.dexbacked.DexBackedMethod;
-import org.jf.dexlib2.dexbacked.DexBackedMethodImplementation;
 import org.jf.dexlib2.iface.Method;
 import org.jf.dexlib2.rewriter.MethodRewriter;
 import org.jf.dexlib2.rewriter.Rewriters;
@@ -22,10 +21,12 @@ public class AsmMethodRewriter extends MethodRewriter {
 
     protected class AsmRewrittenMethod extends RewrittenMethod {
         private final String whereClass;
+        private final String methodName;
 
         public AsmRewrittenMethod(Method method) {
             super(method);
             this.whereClass = ((DexBackedMethod) method).classDef.getType();
+            this.methodName = method.getName();
         }
 
         @Override
@@ -39,7 +40,6 @@ public class AsmMethodRewriter extends MethodRewriter {
 //                if (!AsmInstructionRewriter.excludeActivity(whereClass)) {
 //                    param = AsmInstructionRewriter.replaceActivity(param);
 //                }
-
                 parameter.add(param);
             }
             return parameter;
@@ -51,9 +51,9 @@ public class AsmMethodRewriter extends MethodRewriter {
             if (!AsmInstructionRewriter.excludeBroadcast(whereClass)) {
                 returnType = AsmInstructionRewriter.replaceBroadcast(returnType);
             }
-            if (!AsmInstructionRewriter.excludeActivity(whereClass)) {
-                returnType = AsmInstructionRewriter.replaceActivity(returnType);
-            }
+//            if (!AsmInstructionRewriter.excludeActivity(whereClass)) {
+//                returnType = AsmInstructionRewriter.replaceActivity(returnType);
+//            }
             return returnType;
         }
     }

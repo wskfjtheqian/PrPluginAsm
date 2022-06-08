@@ -24,9 +24,23 @@ public class Main {
                 DexFileFactory.writeDexFile("C:\\Users\\Administrator\\Desktop\\a\\as\\app-debug\\classes.dex", outDex);
             }
 
+            multiDex = DexFileFactory.loadDexContainer(new File("C:\\Users\\Administrator\\Desktop\\a\\as\\classes2.dex"), Opcodes.getDefault());
+            for (String name : multiDex.getDexEntryNames()) {
+                DexFileRewriter rewriter = new DexFileRewriter(new DexRewriter(new AsmRewriterModule()));
+                DexFile outDex = rewriter.rewrite(multiDex.getEntry(name).getDexFile());
+                DexFileFactory.writeDexFile("C:\\Users\\Administrator\\Desktop\\a\\as\\app-debug\\classes2.dex", outDex);
+            }
+
+            multiDex = DexFileFactory.loadDexContainer(new File("C:\\Users\\Administrator\\Desktop\\a\\as\\classes3.dex"), Opcodes.getDefault());
+            for (String name : multiDex.getDexEntryNames()) {
+                DexFileRewriter rewriter = new DexFileRewriter(new DexRewriter(new AsmRewriterModule()));
+                DexFile outDex = rewriter.rewrite(multiDex.getEntry(name).getDexFile());
+                DexFileFactory.writeDexFile("C:\\Users\\Administrator\\Desktop\\a\\as\\app-debug\\classes3.dex", outDex);
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 }
+
