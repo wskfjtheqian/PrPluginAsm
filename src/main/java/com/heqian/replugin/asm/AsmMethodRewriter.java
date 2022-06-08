@@ -1,9 +1,9 @@
 package com.heqian.replugin.asm;
 
+import org.jf.dexlib2.dexbacked.DexBackedMethod;
+import org.jf.dexlib2.dexbacked.DexBackedMethodImplementation;
 import org.jf.dexlib2.iface.Method;
-import org.jf.dexlib2.iface.MethodImplementation;
 import org.jf.dexlib2.rewriter.MethodRewriter;
-import org.jf.dexlib2.rewriter.RewriterUtils;
 import org.jf.dexlib2.rewriter.Rewriters;
 
 import java.util.ArrayList;
@@ -20,39 +20,41 @@ public class AsmMethodRewriter extends MethodRewriter {
     }
 
 
-    public static boolean excludeBroadcast(String type) {
-        return type.equals("Landroid/support/v4/content/LocalBroadcastManager;")
-                || type.equals("Landroidx/localbroadcastmanager/content/LocalBroadcastManager;")
-                || type.equals("Lcom/qihoo360/replugin");
-    }
-
-
-    public static String replaceBroadcast(String name) {
-        switch (name) {
-            case "Landroidx/localbroadcastmanager/content/LocalBroadcastManager;":
-                return "Lcom/qihoo360/replugin/loader/b/PluginLocalBroadcastManager;";
-
-        }
-        return name;
-    }
-
     protected class AsmRewrittenMethod extends RewrittenMethod {
+        private final String whereClass;
+
         public AsmRewrittenMethod(Method method) {
             super(method);
+            this.whereClass = ((DexBackedMethod) method).classDef.getType();
         }
 
         @Override
         public List<? extends CharSequence> getParameterTypes() {
-            List<CharSequence> param = new ArrayList<>();
+            List<CharSequence> parameter = new ArrayList<>();
             for (CharSequence item : super.getParameterTypes()) {
-                param.add(replaceBroadcast(item.toString()));
+                String param = item.toString();
+                if (!AsmInstructionRewriter.excludeBroadcast(whereClass)) {
+                    param = AsmInstructionRewriter.replaceBroadcast(param);
+                }
+//                if (!AsmInstructionRewriter.excludeActivity(whereClass)) {
+//                    param = AsmInstructionRewriter.replaceActivity(param);
+//                }
+
+                parameter.add(param);
             }
-            return param;
+            return parameter;
         }
 
         @Override
         public String getReturnType() {
-            return replaceBroadcast(super.getReturnType());
+            String returnType = super.getReturnType();
+            if (!AsmInstructionRewriter.excludeBroadcast(whereClass)) {
+                returnType = AsmInstructionRewriter.replaceBroadcast(returnType);
+            }
+            if (!AsmInstructionRewriter.excludeActivity(whereClass)) {
+                returnType = AsmInstructionRewriter.replaceActivity(returnType);
+            }
+            return returnType;
         }
     }
 

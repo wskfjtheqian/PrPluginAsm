@@ -1,5 +1,7 @@
 package com.heqian.replugin.asm;
 
+import org.jf.dexlib2.dexbacked.DexBackedField;
+import org.jf.dexlib2.dexbacked.DexBackedMethod;
 import org.jf.dexlib2.iface.Field;
 import org.jf.dexlib2.rewriter.FieldRewriter;
 import org.jf.dexlib2.rewriter.Rewriters;
@@ -15,30 +17,25 @@ public class AsmFieldRewriter extends FieldRewriter {
     }
 
 
-    public static boolean excludeBroadcast(String type) {
-        return type.equals("Landroid/support/v4/content/LocalBroadcastManager;")
-                || type.equals("Landroidx/localbroadcastmanager/content/LocalBroadcastManager;")
-                || type.equals("Lcom/qihoo360/replugin");
-    }
-
-
-    public static String replaceBroadcast(String name) {
-        switch (name.toString()) {
-            case "Landroidx/localbroadcastmanager/content/LocalBroadcastManager;":
-                return "Lcom/qihoo360/replugin/loader/b/PluginLocalBroadcastManager;";
-
-        }
-        return name;
-    }
-
     protected class AsmRewrittenField extends RewrittenField {
+        private final String whereClass;
+
         public AsmRewrittenField(Field field) {
             super(field);
+            this.whereClass = ((DexBackedField) field).classDef.getType();
         }
+
 
         @Override
         public String getType() {
-            return replaceBroadcast(super.getType());
+            String type = super.getType();
+            if (!AsmInstructionRewriter.excludeBroadcast(whereClass)) {
+                type = AsmInstructionRewriter.replaceBroadcast(type);
+            }
+            if (!AsmInstructionRewriter.excludeActivity(whereClass)) {
+                type = AsmInstructionRewriter.replaceActivity(type);
+            }
+            return type;
         }
     }
 
