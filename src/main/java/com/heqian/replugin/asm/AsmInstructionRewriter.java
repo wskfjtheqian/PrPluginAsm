@@ -52,9 +52,6 @@ public class AsmInstructionRewriter extends InstructionRewriter {
                 if (!AsmActivityMethodReferenceRewriter.excludeActivity(type) && !definingClass.equals(AsmActivityMethodReferenceRewriter.replaceActivity(definingClass))) {
                     rewrite = new AsmActivityMethodReferenceRewriter(rewriters);
                 }
-                if (!AsmBroadcastMethodReferenceRewriter.excludeBroadcast(type) && !definingClass.equals(AsmBroadcastMethodReferenceRewriter.replaceBroadcast(definingClass))) {
-                    rewrite = new AsmBroadcastMethodReferenceRewriter(rewriters);
-                }
                 if (!AsmContentResolverMethodReferenceRewriter.excludeProvider(type) && !definingClass.equals(AsmContentResolverMethodReferenceRewriter.replaceProvider(definingClass))) {
                     rewrite = new AsmContentResolverMethodReferenceRewriter(rewriters);
                 }
@@ -63,6 +60,9 @@ public class AsmInstructionRewriter extends InstructionRewriter {
                 }
                 if (!AsmResourcesMethodReferenceRewriter.excludeResource(type) && !definingClass.equals(AsmResourcesMethodReferenceRewriter.replaceResource(definingClass))) {
                     rewrite = new AsmResourcesMethodReferenceRewriter(rewriters);
+                }
+                if (!AsmBroadcastMethodReferenceRewriter.excludeBroadcast(type)) {
+                    rewrite = new AsmBroadcastMethodReferenceRewriter(rewriters);
                 }
             }
         }
@@ -110,9 +110,6 @@ public class AsmInstructionRewriter extends InstructionRewriter {
                 if (!AsmActivityMethodReferenceRewriter.excludeActivity(type) && !definingClass.equals(AsmActivityMethodReferenceRewriter.replaceActivity(definingClass))) {
                     rewrite = new AsmActivityMethodReferenceRewriter(rewriters);
                 }
-                if (!AsmBroadcastMethodReferenceRewriter.excludeBroadcast(type) && !definingClass.equals(AsmBroadcastMethodReferenceRewriter.replaceBroadcast(definingClass))) {
-                    rewrite = new AsmBroadcastMethodReferenceRewriter(rewriters);
-                }
                 if (!AsmContentResolverMethodReferenceRewriter.excludeProvider(type) && !definingClass.equals(AsmContentResolverMethodReferenceRewriter.replaceProvider(definingClass))) {
                     rewrite = new AsmContentResolverMethodReferenceRewriter(rewriters);
                 }
@@ -121,6 +118,9 @@ public class AsmInstructionRewriter extends InstructionRewriter {
                 }
                 if (!AsmResourcesMethodReferenceRewriter.excludeResource(type) && !definingClass.equals(AsmResourcesMethodReferenceRewriter.replaceResource(definingClass))) {
                     rewrite = new AsmResourcesMethodReferenceRewriter(rewriters);
+                }
+                if (!AsmBroadcastMethodReferenceRewriter.excludeBroadcast(type)) {
+                    rewrite = new AsmBroadcastMethodReferenceRewriter(rewriters);
                 }
             }
         }

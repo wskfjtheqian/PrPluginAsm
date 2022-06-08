@@ -1,6 +1,5 @@
 package com.heqian.replugin.asm.reference;
 
-import org.jf.dexlib2.Opcode;
 import org.jf.dexlib2.iface.instruction.ReferenceInstruction;
 import org.jf.dexlib2.iface.reference.MethodReference;
 import org.jf.dexlib2.rewriter.Rewriters;
@@ -34,13 +33,14 @@ public class AsmBroadcastMethodReferenceRewriter extends AsmMethodReferenceRewri
     public static boolean excludeBroadcast(String type) {
         return type.equals("Landroid/support/v4/content/LocalBroadcastManager;")
                 || type.equals("Landroidx/localbroadcastmanager/content/LocalBroadcastManager;")
-                ||  type.startsWith("Lcom/qihoo360/replugin");
+                || type.startsWith("Lcom/qihoo360/replugin");
     }
 
 
     public static String replaceBroadcast(String name) {
         switch (name) {
             case "Landroidx/localbroadcastmanager/content/LocalBroadcastManager;":
+            case "Landroid/support/v4/content/LocalBroadcastManager;":
                 return "Lcom/qihoo360/replugin/loader/b/PluginLocalBroadcastManager;";
 
         }
@@ -48,7 +48,6 @@ public class AsmBroadcastMethodReferenceRewriter extends AsmMethodReferenceRewri
     }
 
     protected class AsmBroadcastRewrittenMethodReference extends AsmRewrittenMethodReference {
-
         public AsmBroadcastRewrittenMethodReference(MethodReference methodReference, ReferenceInstruction instruction) {
             super(methodReference, instruction);
         }
@@ -63,34 +62,17 @@ public class AsmBroadcastMethodReferenceRewriter extends AsmMethodReferenceRewri
 
         @Override
         public List<? extends CharSequence> getParameterTypes() {
-            if (!excludeMethod(getName()) && !"getInstance".equals(getName())) {
-                List<CharSequence> param = new ArrayList<>();
-                param.add(0, "Landroidx/localbroadcastmanager/content/LocalBroadcastManager;");
-                for (CharSequence item : super.getParameterTypes()) {
-                    param.add(item);
-                }
-                return param;
+            List<CharSequence> param = new ArrayList<>();
+            for (CharSequence item : super.getParameterTypes()) {
+                param.add(replaceBroadcast(item.toString()));
             }
-            return super.getParameterTypes();
-        }
-
-        @Override
-        public Opcode getOpcode() {
-            Opcode code = super.getOpcode();
-            if (!excludeMethod(getName())) {
-                if (Opcode.INVOKE_VIRTUAL == code) {
-                    return Opcode.INVOKE_STATIC;
-                } else if (Opcode.INVOKE_VIRTUAL_RANGE == code) {
-                    return Opcode.INVOKE_STATIC_RANGE;
-                }
-            }
-            return code;
+            return param;
         }
 
         @Override
         public String getReturnType() {
-            if (!excludeMethod(getName()) && "getInstance".equals(getName())) {
-                return "Landroidx/localbroadcastmanager/content/LocalBroadcastManager;";
+            if ("getInstance".equals(getName())) {
+                return "Lcom/qihoo360/replugin/loader/b/PluginLocalBroadcastManager;";
             }
             return super.getReturnType();
         }
