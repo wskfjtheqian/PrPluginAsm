@@ -1,10 +1,7 @@
-package com.heqian.replugin.asm.reference;
+package com.heqian.replugin.asm.dex.reference;
 
 import org.jf.dexlib2.base.reference.BaseTypeReference;
-import org.jf.dexlib2.iface.reference.FieldReference;
-import org.jf.dexlib2.iface.reference.Reference;
 import org.jf.dexlib2.iface.reference.TypeReference;
-import org.jf.dexlib2.rewriter.FieldReferenceRewriter;
 import org.jf.dexlib2.rewriter.Rewriter;
 import org.jf.dexlib2.rewriter.Rewriters;
 

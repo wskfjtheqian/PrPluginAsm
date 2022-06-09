@@ -1,8 +1,8 @@
-package com.heqian.replugin.asm;
+package com.heqian.replugin.asm.dex;
 
-import com.heqian.replugin.asm.reference.AsmFieldReferenceRewriter;
-import com.heqian.replugin.asm.reference.AsmMethodReferenceRewriter;
-import com.heqian.replugin.asm.reference.AsmTypeReferenceRewriter;
+import com.heqian.replugin.asm.dex.reference.AsmFieldReferenceRewriter;
+import com.heqian.replugin.asm.dex.reference.AsmMethodReferenceRewriter;
+import com.heqian.replugin.asm.dex.reference.AsmTypeReferenceRewriter;
 import org.jf.dexlib2.Opcode;
 import org.jf.dexlib2.ReferenceType;
 import org.jf.dexlib2.dexbacked.DexBackedMethodImplementation;
@@ -259,7 +259,6 @@ public class AsmInstructionRewriter extends InstructionRewriter {
 //                if (!excludeActivity(whereClass)) {
 //                    type = replaceActivity(type);
 //                }
-
                 if (Opcode.CHECK_CAST == instruction.getOpcode()) {
                     return new AsmRewrittenInstruction21c(
                             (Instruction21c) instruction,

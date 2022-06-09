@@ -1,9 +1,7 @@
-package com.heqian.replugin.asm;
+package com.heqian.replugin.asm.dex;
 
 import org.jf.dexlib2.iface.ClassDef;
 import org.jf.dexlib2.iface.MethodImplementation;
-import org.jf.dexlib2.iface.instruction.Instruction;
-import org.jf.dexlib2.iface.reference.MethodReference;
 import org.jf.dexlib2.rewriter.Rewriter;
 import org.jf.dexlib2.rewriter.RewriterModule;
 import org.jf.dexlib2.rewriter.Rewriters;

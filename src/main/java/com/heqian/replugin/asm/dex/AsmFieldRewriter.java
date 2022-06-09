@@ -1,7 +1,6 @@
-package com.heqian.replugin.asm;
+package com.heqian.replugin.asm.dex;
 
 import org.jf.dexlib2.dexbacked.DexBackedField;
-import org.jf.dexlib2.dexbacked.DexBackedMethod;
 import org.jf.dexlib2.iface.Field;
 import org.jf.dexlib2.rewriter.FieldRewriter;
 import org.jf.dexlib2.rewriter.Rewriters;

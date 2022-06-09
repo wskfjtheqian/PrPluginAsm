@@ -1,4 +1,4 @@
-package com.heqian.replugin.asm;
+package com.heqian.replugin.asm.dex;
 
 import org.jf.dexlib2.iface.ClassDef;
 import org.jf.dexlib2.iface.Field;
