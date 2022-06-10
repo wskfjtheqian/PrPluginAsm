@@ -19,7 +19,7 @@ public class Main {
             ApkFile apkFile = new ApkFile();
             apkFile.setZipalignPath("C:\\sdk\\Android\\build-tools\\33.0.0-rc2\\zipalign.exe");
             apkFile.setApksignerPath("C:\\sdk\\Android\\build-tools\\33.0.0-rc2\\apksigner.bat");
-            apkFile.setInZipFile(new File("C:\\Users\\Administrator\\Desktop\\a\\ab\\app-release.apk"));
+            apkFile.setInZipFile(new File("D:\\dev\\live_app\\build\\app\\outputs\\flutter-apk\\app-release.apk"));
             apkFile.setOutZipFile(new File("C:\\Users\\Administrator\\Desktop\\a\\ab\\app-release-b.apk"));
             apkFile.setKeyPath("D:\\dev\\RePlugin\\MyApplication\\key\\tilki_live.jks");
             apkFile.setStorePassword("u2rXPYCf5wCYmrIW");
