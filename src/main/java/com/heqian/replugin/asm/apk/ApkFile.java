@@ -180,6 +180,7 @@ public class ApkFile {
         BufferedReader inputReader = null;
         BufferedReader errorReader = null;
         try {
+            System.out.println(joiner.toString());
             Process process = Runtime.getRuntime().exec(joiner.toString());
             String str;
             inputReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
