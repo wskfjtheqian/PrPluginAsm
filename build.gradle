@@ -5,13 +5,22 @@ plugins {
 
 apply plugin: 'com.github.johnrengelman.shadow'
 
-shadowJar  {
+shadowJar {
     manifest {
         attributes "Main-Class": "com.heqian.replugin.asm.Main"
     }
     dependencies {
         include(dependency('org.smali:dexlib2:2.5.2'))
         include(dependency('args4j:args4j:2.33'))
+        include(dependency('com.google.code.findbugs:jsr305:3.0.2'))
+        include(dependency('com.google.errorprone:error_prone_annotations:2.2.0'))
+        include(dependency('com.google.guava:failureaccess:1.0.1'))
+        include(dependency('com.google.guava:guava:27.1-android'))
+        include(dependency('com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'))
+        include(dependency('com.google.j2objc:j2objc-annotations:1.1'))
+        include(dependency('org.apiguardian:apiguardian-api:1.1.0'))
+        include(dependency('org.checkerframework:checker-compat-qual:2.5.2'))
+        include(dependency('org.codehaus.mojo:animal-sniffer-annotations:1.17'))
     }
 }
 
@@ -28,6 +37,17 @@ dependencies {
     implementation 'args4j:args4j:2.33'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
+    implementation 'com.google.errorprone:error_prone_annotations:2.2.0'
+    implementation 'com.google.guava:failureaccess:1.0.1'
+    implementation 'com.google.guava:guava:27.1-android'
+    implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
+    implementation 'com.google.j2objc:j2objc-annotations:1.1'
+    implementation 'org.apiguardian:apiguardian-api:1.1.0'
+    implementation 'org.checkerframework:checker-compat-qual:2.5.2'
+    implementation 'org.codehaus.mojo:animal-sniffer-annotations:1.17'
+
 }
 
 test {
