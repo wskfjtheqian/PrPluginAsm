@@ -10,65 +10,40 @@ import org.jf.dexlib2.rewriter.DexFileRewriter;
 import org.jf.dexlib2.rewriter.DexRewriter;
 import org.jf.dexlib2.writer.io.MemoryDataStore;
 import org.jf.dexlib2.writer.pool.DexPool;
+import org.kohsuke.args4j.Option;
 
 import java.io.*;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.StringJoiner;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 public class ApkFile {
 
-    private File inZipFile;
+    @Option(name = "-i", aliases = "--inZip", required = true, usage = "Input Apk file path")
+    public File inZipFile;
 
-    private File outZipFile;
+    @Option(name = "-o", aliases = "--outZip", required = true, usage = "Output Apk file path")
+    public File outZipFile;
 
-    private String keyPath;
+    @Option(name = "-k", aliases = "--key", required = true, usage = "Key file path")
+    public String keyPath;
 
-    private String storePassword;
+    @Option(name = "-s", aliases = "--store", required = true, usage = "Key store password")
+    public String storePassword;
 
-    private String keyAlias;
+    @Option(name = "-a", aliases = "--alias", required = true, usage = "Key alias")
+    public String keyAlias;
 
-    private String keyPassword;
+    @Option(name = "-p", aliases = "--pass", required = true, usage = "Key password")
+    public String keyPassword;
 
-    private String apksignerPath;
+    @Option(name = "-g", aliases = "--apksigner", required = true, usage = "Android build tools apksignerPath path")
+    public String apksignerPath;
 
-    private String zipalignPath;
-
-    public void setInZipFile(File inZipFile) {
-        this.inZipFile = inZipFile;
-    }
-
-    public void setOutZipFile(File outZipFile) {
-        this.outZipFile = outZipFile;
-    }
-
-    public void setKeyPath(String keyPath) {
-        this.keyPath = keyPath;
-    }
-
-    public void setStorePassword(String storePassword) {
-        this.storePassword = storePassword;
-    }
-
-    public void setKeyAlias(String keyAlias) {
-        this.keyAlias = keyAlias;
-    }
-
-    public void setKeyPassword(String keyPassword) {
-        this.keyPassword = keyPassword;
-    }
-
-    public void setApksignerPath(String apksignerPath) {
-        this.apksignerPath = apksignerPath;
-    }
-
-    public void setZipalignPath(String zipalignPath) {
-        this.zipalignPath = zipalignPath;
-    }
+    @Option(name = "-z", aliases = "--zipalign", required = true, usage = "Android build tools zipalign path")
+    public String zipalignPath;
 
     private DexBackedDexFile inputStreamToDexFile(InputStream inputStream) throws IOException {
         try {
